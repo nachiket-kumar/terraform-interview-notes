@@ -91,3 +91,130 @@ https://developer.hashicorp.com/terraform/language/modules/syntax#version
 https://developer.hashicorp.com/terraform/language/expressions/version-constraints#version-constraint-syntax
 
 6.  The terraform state list the command is used in Terraform, an infrastructure-as-code tool, to list all the resources currently being managed by Terraform within a particular state file. This command provides a quick overview of the resources that Terraform is aware of and managing. It's particularly useful for understanding what infrastructure resources have been provisioned and are being tracked by Terraform for any given project or environment.
+
+7.  The correct prefix string for setting input variables using environment variables in Terraform is TF_VAR. This prefix is recognized by Terraform to assign values to variables.
+    Terraform allows you to use environment variables to set values in your Terraform configuration. This can be useful for specifying values specific to the environment in which Terraform is running or providing values that can be easily changed without modifying the Terraform configuration.
+
+To use a variable in Terraform, you need to define the variable using the following syntax in your Terraform configuration:
+
+```hcl
+variable "instructor_name" {
+  type = string
+}
+```
+
+You can then set the value of the environment variable when you run Terraform by exporting the variable in your shell before running any Terraform commands:
+
+```hcl
+$ export TF_VAR_instructor_name="bryan"
+$ terraform apply
+```
+
+https://developer.hashicorp.com/terraform/cli/config/environment-variables
+
+8.  IaC code is platform-agnostic and can be used to manage infrastructure across various cloud platforms, providing flexibility and scalability in managing resources.
+    IaC utilizes a human-readable configuration language, making it easier for developers and operators to understand, write, and maintain infrastructure code efficiently.
+    Using Infrastructure as Code (IaC) allows for configurations to be stored in version control, enabling collaboration, tracking changes, and ensuring consistency in infrastructure deployment.
+    Infrastructure as Code has many benefits. For starters, IaC allows you to create a blueprint of your data center as code that can be versioned, shared, and reused. Because IaC is code, it can (and should) be stored and managed in a code repository, such as GitHub, GitLab, or Bitbucket. Changes can be proposed or submitted via Pull Requests (PRs), which can help ensure a proper workflow, enable an approval process, and follow a typical development lifecycle.
+
+One of the primary reasons that Terraform (or other IaC tools) are becoming more popular is because they are mostly platform agnostic. You can use Terraform to provision and manage resources on various platforms, SaaS products, and even local infrastructure.
+
+IaC is generally easy to read (and develop). Terraform is written in HashiCorp Configuration Language (HCL), while others may use YAML or solution-specific languages (like Microsoft ARM). But generally, IaC code is easy to read and understand
+
+Incorrect Answer:
+
+IaC is written using a declarative approach (not imperative), which allows users to simply focus on what the eventual target configuration should be, and the tool manages the process of how that happens. This often speeds things up because resources can be created/managed in parallel when there aren't any implicit or explicit dependencies.
+
+https://developer.hashicorp.com/terraform/tutorials/aws-get-started/infrastructure-as-code
+
+https://www.terraform.io/use-cases/infrastructure-as-code
+
+9.  Terraform analyzes any expressions within a resource block to find references to other objects and treats those references as implicit ordering requirements when creating, updating, or destroying resources.
+    Terraform resource dependencies control how resources are created, updated, and destroyed. When Terraform creates or modifies resources, it must be aware of any dependencies that exist between those resources. By declaring these dependencies, Terraform can ensure that resources are created in the correct order so that dependent resources are available before other resources that depend on them.
+
+To declare a resource dependency, you can use the depends_on argument in a resource block. The depends_on argument takes a list of resource names and specifies that the resource block in which it is declared depends on those resources.
+
+https://developer.hashicorp.com/terraform/language/resources
+
+10. You are performing a code review of a colleague's Terraform code and see the following code. Where is this module stored?
+
+```hcl
+module "vault-aws-tgw" {
+source = "terraform/vault-aws-tgw/hcp"
+version = "1.0.0"
+
+client_id = "4djlsn29sdnjk2btk"
+hvn_id = "a4c9357ead4de"
+route_table_id = "rtb-a221958bc5892eade331"
+}
+```
+
+The code specifies a source from terraform/vault-aws-tgw/hcp, a typical format for modules stored in the Terraform public registry.
+You can use the Terraform Public Registry by referencing the modules you want to use in your Terraform code and including them as part of your configuration.
+
+To reference a module from the Terraform Public Registry, you can use the module block in your Terraform code. For example, if you want to use a VPC module from the registry, you would add the following code to your Terraform configuration:
+
+```hcl
+module "vpc" {
+source = "terraform/aws-modules/vpc"
+version = "2.34.0"
+
+# Add any required variables and configuration here
+
+}
+```
+
+The source attribute specifies the module source, which is the repository on the Terraform Public Registry. The version attribute specifies the version of the module you want to use.
+
+You can also pass values for variables in the module by using them within the module block. For example:
+
+```hcl
+module "vpc" {
+  source = "terraform/aws-modules/vpc"
+  version = "2.34.0"
+
+  name = "my-vpc"
+  cidr = "10.0.0.0/16"
+  azs  = ["us-west-2a", "us-west-2b", "us-west-2c"]
+}
+```
+
+Once you've specified the module in your Terraform code, you can use it as you would any other resource. For example, you could reference the VPC ID created by the VPC module with the following code:
+
+```hcl
+output "vpc_id" {
+  value = module.vpc.vpc_id
+}
+```
+
+You can find more information on using modules from the Terraform Public Registry in the Terraform documentation: https://www.terraform.io/docs/configuration/modules.html
+
+11. Anyone can publish and share modules on the Terraform Public Registry, and meeting the requirements for publishing a module is extremely easy.
+
+What are some of the requirements that must be met in order to publish a module on the Terraform Public Registry?
+(Any Three)
+
+a.The module must be on GitHub and must be a public repo.
+b.Module repositories must use this three-part name format, terraform-<PROVIDER>-<NAME>.
+c.The registry uses tags to identify module versions. Release tag names must be for the format x.y.z, and can optionally be prefixed with a v .
+The requirement for release tag names to follow the x.y.z format and optionally be prefixed with a 'v' is valid, as it ensures consistency and clarity in versioning for modules on the Terraform Public Registry.
+x.y.z tags for releases. The registry uses tags to identify module versions. Release tag names must be a semantic version, which can optionally be prefixed with a v. For example, v1.0.4 and 0.9.2. To publish a module initially, at least one release tag must be present. Tags that don't look like version numbers are ignored.
+
+https://developer.hashicorp.com/terraform/registry/modules/publish#requirements
+
+12. The terraform state command can indeed be used to modify the current state by removing items. This is useful for managing the state of resources in Terraform.
+    The terraform state command and its subcommands can be used for various tasks related to the Terraform state. Some of the tasks that can be performed using the terraform state command are:
+
+Inspecting the Terraform state: The terraform state show subcommand can be used to display the current state of a Terraform configuration. This can be useful for verifying the current state of resources managed by Terraform.
+
+Updating the Terraform state: The terraform state mv and terraform state rm subcommands can be used to move and remove resources from the Terraform state, respectively.
+
+Pulling and pushing the Terraform state: The terraform state pull and terraform state push subcommands can be used to retrieve and upload the Terraform state from and to a remote backend, respectively. This is useful when multiple users or systems are working with the same Terraform configuration.
+
+Importing resources into Terraform: The terraform state import subcommand can be used to import existing resources into the Terraform state. This allows Terraform to manage resources that were created outside of Terraform.
+
+By using the terraform state command and its subcommands, users can manage and manipulate the Terraform state in various ways, helping to ensure that their Terraform configurations are in the desired state.
+
+https://developer.hashicorp.com/terraform/cli/commands/state/list
+
+https://developer.hashicorp.com/terraform/cli/state
