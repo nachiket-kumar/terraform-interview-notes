@@ -35,9 +35,11 @@ default = ["snickers", "kitkat", "reeces", "m&ms"]
 }
 ```
 
+```hcl
 output "give_me_candy" {
 value = element(var.candy_list, 2)
 }
+```
 
 The output value of the code snippet is "reeces" because the element function is used to access the element at index 2 in the candy_list variable, which is "reeces".
 In this example, the candy_list variable is a list of strings, and the output block retrieves the third element in the list (at index 2) and outputs it as the value of give_me_candy.
