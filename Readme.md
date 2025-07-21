@@ -7,11 +7,11 @@ https://developer.hashicorp.com/terraform/cli/commands/force-unlock
 
 2.  WHY MIGHT A USER OPT TO INCLUDE THE FOLLOWING SNIPPET IN THEIR CONFIGURATION FILE?
 
-````hcl
+```hcl
  terraform {
  required_version = ">= 1.9.2"
  }
- ```
+```
 
 The snippet specifies the minimum version of Terraform required to run the configuration, ensuring compatibility and preventing potential issues that may arise from using older versions
 The required_version parameter in a terraform block is used to specify the minimum version of Terraform that is required to run the configuration. This parameter is optional, but it can be useful for ensuring that a Terraform configuration is only run with a version of Terraform that is known to be compatible.
@@ -33,7 +33,7 @@ variable "candy_list" {
 type = list(string)
 default = ["snickers", "kitkat", "reeces", "m&ms"]
 }
-````
+```
 
 output "give_me_candy" {
 value = element(var.candy_list, 2)
