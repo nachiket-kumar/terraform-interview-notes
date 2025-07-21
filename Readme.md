@@ -3,13 +3,15 @@
 
 Be very careful forcing an unlock, as it could cause data corruption and problems with your state file.
 
-[Terraform force-unlock documentation](https://developer.hashicorp.com/terraform/cli/commands/force-unlock)
+https://developer.hashicorp.com/terraform/cli/commands/force-unlock
 
 2.  WHY MIGHT A USER OPT TO INCLUDE THE FOLLOWING SNIPPET IN THEIR CONFIGURATION FILE?
 
-    terraform {
-    required_version = ">= 1.9.2"
-    }
+````hcl
+ terraform {
+ required_version = ">= 1.9.2"
+ }
+ ```
 
 The snippet specifies the minimum version of Terraform required to run the configuration, ensuring compatibility and preventing potential issues that may arise from using older versions
 The required_version parameter in a terraform block is used to specify the minimum version of Terraform that is required to run the configuration. This parameter is optional, but it can be useful for ensuring that a Terraform configuration is only run with a version of Terraform that is known to be compatible.
@@ -26,10 +28,12 @@ https://developer.hashicorp.com/terraform/language/state/workspaces#workspace-in
 
 4.  Understanding how indexes work is essential when working with different variable types and resource blocks that use count or for_each. Therefore, what is the output value of the following code snippet?
 
+```hcl
 variable "candy_list" {
 type = list(string)
 default = ["snickers", "kitkat", "reeces", "m&ms"]
 }
+````
 
 output "give_me_candy" {
 value = element(var.candy_list, 2)
@@ -54,14 +58,16 @@ https://developer.hashicorp.com/terraform/language/functions/element
 
 5.  When using constraint expressions to signify a version of a provider, which of the following are valid provider versions that satisfy the expression found in the following code snippet: (select two)
 
+```hcl
 terraform {
-required_providers {
-aws = {
-source = "hashicorp/aws"
-version ~> "5.36.0"
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = "~> 5.36.0"
+    }
+  }
 }
-}
-}
+```
 
 The version "5.36.9" satisfies the constraint expression "~> 5.36.0" as it falls within the same minor version range (5.36.x).
 In Terraform, required_providers act as traffic controllers for your infrastructure tools. They ensure all modules use the right versions of providers like AWS or Azure, avoiding compatibility issues and guaranteeing everyone plays by the same rules. Think of them as a clear roadmap for your infrastructure setup, leading to consistent, predictable, and secure deployments.
@@ -81,3 +87,5 @@ Version numbers should be a series of numbers separated by periods (like 1.2.0),
 https://developer.hashicorp.com/terraform/language/modules/syntax#version
 
 https://developer.hashicorp.com/terraform/language/expressions/version-constraints#version-constraint-syntax
+
+6.  The terraform state list the command is used in Terraform, an infrastructure-as-code tool, to list all the resources currently being managed by Terraform within a particular state file. This command provides a quick overview of the resources that Terraform is aware of and managing. It's particularly useful for understanding what infrastructure resources have been provisioned and are being tracked by Terraform for any given project or environment.
