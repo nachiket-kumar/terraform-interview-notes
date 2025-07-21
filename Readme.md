@@ -218,3 +218,110 @@ By using the terraform state command and its subcommands, users can manage and m
 https://developer.hashicorp.com/terraform/cli/commands/state/list
 
 https://developer.hashicorp.com/terraform/cli/state
+
+13. Terraform can be expressed in JSON syntax in addition to HCL. JSON is a popular choice for configuration files due to its simplicity and compatibility with various systems.
+    Terraform can be expressed using two syntaxes: HashiCorp Configuration Language (HCL), which is the primary syntax for Terraform, and JSON.
+
+The HCL syntax is designed to be human-readable and easy to write, and it provides many features designed explicitly for Terraform, such as interpolation, variables, and modules.
+
+The JSON syntax is a machine-readable alternative to HCL, and it is typically used when importing existing infrastructure into Terraform or when integrating Terraform with other tools that expect data in JSON format.
+
+While Terraform will automatically detect the syntax of a file based on its extension, you can also specify the syntax explicitly by including a terraform stanza in the file, as follows:
+
+```hcl
+# HCL syntax Example
+
+# terraform { }
+
+# JSON syntax Exmample
+
+{
+"terraform": {}
+}
+```
+
+Note that while JSON is supported as a syntax, it is not recommended to use it for writing Terraform configurations from scratch, as the HCL syntax is more user-friendly and provides better support for Terraform's specific features.
+
+https://github.com/hashicorp/hcl/blob/main/hclsyntax/spec.md
+
+https://developer.hashicorp.com/terraform/language/syntax/json
+
+14. In the example below, the depends_on argument creates what type of dependency?
+
+```hcl
+resource "aws_instance" "example" {
+  ami           = "ami-2757f631"
+  instance_type = "t2.micro"
+  depends_on    = [aws_s3_bucket.company_data]
+}
+```
+
+The `depends_on` argument in Terraform creates an explicit dependency between resources. This means that Terraform will wait for the specified resource to be created or updated before proceeding with the dependent resource.
+Explicit dependencies in Terraform are dependencies that are explicitly declared in the Terraform configuration. These dependencies are used to control the order in which Terraform creates, updates, and destroys resources.
+
+In Terraform, you can declare explicit dependencies using the depends_on argument in a resource block. The depends_on argument takes a list of resource names and specifies that the resource block in which it is declared depends on those resources.
+
+For example, consider a scenario where you have a virtual machine (VM) that depends on a virtual network (VNET) and a subnet. You can declare these dependencies using the depends_on argument as follows:
+
+```hcl
+
+resource "azurerm_virtual_network" "vnet" {
+  name                = "example-vnet"
+  address_space       = ["10.0.0.0/16"]
+}
+
+resource "azurerm_subnet" "subnet" {
+  name                 = "example-subnet"
+  virtual_network_name = azurerm_virtual_network.vnet.name
+  address_prefix       = "10.0.1.0/24"
+}
+
+resource "azurerm_network_interface" "nic" {
+  name                = "example-nic"
+  location            = azurerm_virtual_network.vnet.location
+  subnet_id           = azurerm_subnet.subnet.id
+  depends_on = [
+    azurerm_subnet.subnet,
+    azurerm_virtual_network.vnet
+  ]
+}
+```
+
+In this example, the azurerm_network_interface resource depends on both the azurerm_subnet and the azurerm_virtual_network resources, so Terraform will create those resources first, and then create the azurerm_network_interface resource.
+
+By declaring explicit dependencies, you can ensure that Terraform creates resources in the correct order, so that dependent resources are available before other resources that depend on them. This helps prevent errors or unexpected behavior when creating or modifying infrastructure, and makes it easier to manage and understand the relationship between resources.
+
+Overall, the use of explicit dependencies is a critical aspect of Terraform, as it helps ensure that resources are created and managed in the correct order and makes it easier to manage and understand the relationship between resources.
+https://learn.hashicorp.com/tutorials/terraform/dependencies
+
+15. You are using Terraform to deploy some cloud resources and have developed the following code. However, you receive an error when trying to provision the resource.fixes the syntax of the Terraform code?
+    Write the code which fixes the syntax of the Terraform code?
+
+```hcl
+    resource "aws_security_group" "vault_elb" {
+  name        = "${var.name_prefix}-vault-elb"
+  description = Vault ELB
+  vpc_id      = var.vpc_id
+}
+```
+
+corrected code👇
+
+```hcl
+resource "aws_security_group" "vault_elb" {
+name = "${var.name_prefix}-vault-elb"
+description = "Vault ELB"
+vpc_id = var.vpc_id
+}
+```
+
+The syntax error in the original code is that the description value is missing quotation marks. By adding the quotes around "Vault ELB", the code will be corrected and the provisioning process will not throw an error.
+When assigning a value to an argument in Terraform, there are a few requirements that must be met:
+
+Data type: The value must be of the correct data type for the argument. Terraform supports several data types, including strings, numbers, booleans, lists, and maps.
+
+Value constraints: Some arguments may have specific value constraints that must be met. For example, an argument may only accept values within a certain range or values from a specific set of values.
+
+When assigning a value to an argument expecting a string, it must be enclosed in quotes ("...") unless it is being generated programmatically.
+
+https://developer.hashicorp.com/terraform/language/syntax/configuration#arguments-and-blocks
