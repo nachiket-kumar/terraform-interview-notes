@@ -325,3 +325,166 @@ Value constraints: Some arguments may have specific value constraints that must 
 When assigning a value to an argument expecting a string, it must be enclosed in quotes ("...") unless it is being generated programmatically.
 
 https://developer.hashicorp.com/terraform/language/syntax/configuration#arguments-and-blocks
+
+16. True or False? Rather than use a state file, Terraform can inspect cloud resources on every run to validate that the real-world resources match the desired state.
+    False. Terraform requires a state file to store information about the current state of infrastructure resources. By inspecting this state file, Terraform can determine the necessary changes to bring the real-world resources in line with the desired state specified in the configuration files. Without a state file, Terraform would not be able to perform this validation.
+    State is a necessary requirement for Terraform to function. And in the scenarios where Terraform may be able to get away without state, doing so would require shifting massive amounts of complexity from one place (state) to another place (the replacement concept).
+
+To support mapping configuration to resources in the real world, Terraform uses its own state structure. Terraform can guarantee one-to-one mapping when it creates objects and records their identities in the state. Terraform state also serves as a performance improvement - rather than having to scan every single resource to determine the current state of each resource.
+
+https://developer.hashicorp.com/terraform/language/state/purpose
+
+17. True or False? When using the Terraform provider for Vault, the tight integration between these HashiCorp tools provides the ability to mask secrets in the state file.
+    False. The statement is false because the tight integration between Terraform and Vault does not automatically mask secrets in the state file. Developers need to implement secure practices to handle secrets effectively.
+    By default, Terraform does not provide the ability to mask secrets in the Terraform plan and state files regardless of what provider you are using. While Terraform and Vault are both developed by HashiCorp and have a tight integration, masking secrets in Terraform plans and state files requires additional steps to securely manage sensitive information.
+
+One common approach is to use environment variables to store sensitive information or use Terraform's data sources to retrieve the information from the environment rather than hardcoding the information into the Terraform configuration. This helps to ensure that sensitive information is not stored in plain text in the Terraform configuration files.
+
+https://learn.hashicorp.com/tutorials/terraform/secrets-vault
+
+18. HashiCorp recommends using 2 spaces between each nesting level in Terraform code for better readability and maintainability.
+    HashiCorp, the creator of Terraform, recommends using two spaces for indentation when writing Terraform code. This is a convention that helps to improve readability and consistency across Terraform configurations.
+
+For example, when defining a resource in Terraform, you would use two spaces to indent each level of the resource definition, as in the following example:
+
+```hcl
+
+resource "aws_instance" "example" {
+  ami           = "ami-0c55b159cbfafe1f0"
+  instance_type = "t2.micro"
+
+  tags = {
+    Name = "example-instance"
+  }
+}
+```
+
+While this is the recommended convention, it is not a strict requirement and Terraform will still function correctly even if you use a different number of spaces or a different type of indentation. However, using two spaces for indentation is a widely adopted convention in the Terraform community and is recommended by HashiCorp to improve the readability and maintainability of your Terraform configurations.
+
+Check this link for more information - https://developer.hashicorp.com/terraform/language/style
+
+19. What do the declarations, such as name, cidr, and azs, in the following Terraform code represent and what purpose do they serve?
+
+```hcl
+module "vpc" {
+  source  = "terraform-aws-modules/vpc/aws"
+  version = "5.7.0"
+
+  name = var.vpc_name
+  cidr = var.vpc_cidr
+
+  azs             = var.vpc_azs
+  private_subnets = var.vpc_private_subnets
+  public_subnets  = var.vpc_public_subnets
+
+  enable_nat_gateway = var.vpc_enable_nat_gateway
+
+  tags = var.vpc_tags
+}
+```
+
+The declarations like name, cidr, and azs are variables that are being passed into the child module for resource creation. These variables allow for customization and flexibility in configuring the VPC module according to specific requirements.
+To pass values to a Terraform module when calling the module in your code, you use input variables. Input variables are a way to pass values into a Terraform module from the calling code. They allow the module to be flexible and reusable, as the same module can be used with different input values in different contexts.
+
+In this example, the values for the name, cidr, and azs inputs are passed to the module as values of variables. The variables are defined in the calling code in the calling module using the variable block.
+
+To pass the values to the module, you can specify them in a number of ways, such as:
+
+Using command-line flags when running Terraform
+
+Storing the values in a Terraform .tfvars file and passing that file to Terraform when running it
+
+Using environment variables
+
+For more information on Terraform modules and input variables, I recommend checking out the Terraform documentation: https://www.terraform.io/docs/modules/index.html
+
+https://learn.hashicorp.com/tutorials/terraform/module-use#set-values-for-module-input-variables
+
+20. Harry has deployed resources on Azure using Terraform. However, he has discovered that his co-workers Ron and Ginny have manually created a few resources using the Azure console. Since it is company policy to manage production workloads using IaC, how can Harry bring these resources under Terraform management without negatively impacting the availability of the deployed resources?
+
+Using `terraform import` or the `import` block allows Harry to bring the existing resources under Terraform management without disrupting the availability of the deployed resources. This method ensures that the resources are managed by Terraform while preserving their current state.
+To manage the resources created manually by Ron and Ginny in Terraform without negatively impacting the availability of the deployed resources, Harry can follow the steps below:
+
+-- Import the existing resources: Harry can use the terraform import command to import the existing resources into Terraform. The terraform import command allows you to import existing infrastructure into Terraform, creating a Terraform state file for the resources. You can also create an import block to pull in resources under Terraform management.
+
+-- Modify the Terraform configuration: After importing the resources, Harry can modify the Terraform configuration to reflect the desired state of the resources. This will allow him to manage the resources using Terraform just like any other Terraform-managed resource
+
+-- Test the changes: Before applying the changes, Harry can use the terraform plan command to preview the changes that will be made to the resources. This will allow him to verify that the changes will not negatively impact the availability of the resources.
+
+-- Apply the changes: If the changes are correct, Harry can use the terraform apply command to apply the changes to the resources.
+
+By following these steps, Harry can start managing the manually created resources in Terraform while ensuring that the availability of the deployed resources is not impacted.
+
+The terraform import command is used to import existing resources into Terraform. This allows you to take resources that you’ve created by some other means and bring them under Terraform management.
+
+Note that terraform import DOES NOT generate configuration, it only modifies state. You'll still need to write a configuration block for the resource for which it will be mapped using the terraform import command.
+
+https://developer.hashicorp.com/terraform/language/import
+
+https://developer.hashicorp.com/terraform/cli/commands/import
+
+21. In order to reduce the time it takes to provision resources, Terraform uses parallelism. By default, how many resources will Terraform provision concurrently during a `terraform apply`?
+
+Terraform by default provisions 10 resources concurrently during a `terraform apply` command to speed up the provisioning process and reduce the overall time taken.
+By default, Terraform will provision resources concurrently with a maximum of 10 concurrent resource operations. This setting is controlled by the parallelism configuration option in Terraform, which can be set globally in the Terraform configuration file or on a per-module basis.
+
+The parallelism setting determines the number of resource operations that Terraform will run in parallel, so increasing the parallelism setting will result in Terraform provisioning resources more quickly, but can also increase the risk of rate-limiting or other errors from the API.
+
+You can adjust the parallelism setting in your Terraform configuration file by adding the following code:
+
+```hcl
+terraform {
+  parallelism = 20
+}
+```
+
+This setting sets the maximum number of concurrent resource operations to 10. You can adjust this number to meet your specific needs and constraints.
+
+https://developer.hashicorp.com/terraform/internals/graph#walking-the-graph
+
+22. You are adding a new variable to your configuration. Which of the following is NOT a valid variable type in Terraform?
+    The Terraform language uses the following types for its values: string, number, bool, list (or tuple), map (or object). There are no other supported variable types in Terraform, therefore, float is NOT a valid variable type in Terraform.
+
+Don't forget that variable types are included in a variable block, but they are NOT required since Terraform interprets the type from a default value or value provided by other means (ENV, CLI flag, etc)
+
+```hcl
+variable "practice-exam" {
+  description = "bryan's terraform associate practice exams"
+  type        = string
+  default     = "highly-rated"
+}
+```
+
+https://developer.hashicorp.com/terraform/language/expressions/types
+
+Addon 👇
+The variable type `number` is a valid type in Terraform. Numbers are used to represent numerical values in Terraform configurations.
+The variable type `bool` is a valid type in Terraform. Booleans are used to represent true or false values in Terraform configurations.
+The variable type `string` is a valid type in Terraform. Strings are commonly used for representing text values in Terraform configurations.
+The variable type `map` is a valid type in Terraform. Maps are used to define key-value pairs in Terraform configurations.
+In Terraform, the variable type `float` is not a valid type. Terraform supports variable types such as `string`, `map`, `bool`, and `number`, but not `float`
+
+23. A user runs terraform init on their RHEL-based server, and per the output, two provider plugins are downloaded:
+
+```hcl
+
+$ terraform init
+
+Initializing the backend...
+
+Initializing provider plugins...
+- Checking for available provider plugins...
+- Downloading plugin for provider "aws" (hashicorp/aws) 2.44.0...
+- Downloading plugin for provider "random" (hashicorp/random) 2.2.1...
+
+Terraform has been successfully initialized!
+```
+
+Where are these plugins downloaded and stored on the server?
+
+The provider plugins are downloaded and stored in the `.terraform/providers` directory within the current working directory. This directory is specifically used by Terraform to manage provider plugins.
+By default, terraform init downloads plugins into a subdirectory of the working directory,
+`.terraform/providers` so that each working directory is self-contained.
+
+![See the example here, where I ran a terraform init and you can see the resulting directory (highlighted in the red box) and then the actual provider that was downloaded (highlighted by the green arrow)](image.png)
+https://developer.hashicorp.com/terraform/plugin#installing-plugins
