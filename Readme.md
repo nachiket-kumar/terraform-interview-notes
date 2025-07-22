@@ -488,3 +488,229 @@ By default, terraform init downloads plugins into a subdirectory of the working 
 
 ![See the example here, where I ran a terraform init and you can see the resulting directory (highlighted in the red box) and then the actual provider that was downloaded (highlighted by the green arrow)](image.png)
 https://developer.hashicorp.com/terraform/plugin#installing-plugins
+
+24. You are using an HCP Terraform workspace linked to a GitHub repo to manage production workloads in your environment. After approving a merge request, what default action can you expect to be triggered on the workspace?
+
+A speculative plan will be run to show the potential changes to the managed environment and validate the changes against any applicable Sentinel policies
+After approving a merge request, HCP Terraform will run a speculative plan to show the potential changes that will be applied to the managed environment. This allows users to review and validate the changes against any applicable Sentinel policies before applying them.
+After approving a merge request that modifies Terraform configurations in a GitHub repository linked to an HCP Terraform workspace, the default action that can be expected to run automatically is a "speculative plan" operation.
+
+When you merge a pull request or push changes to the main branch (or any branch you have configured as the trigger for the workspace), HCP Terraform typically triggers a plan operation. During this plan phase, Terraform examines the proposed changes to your infrastructure and displays a list of actions it would take if applied. It's a way to preview the changes before actually making them.
+
+The plan output shows what resources Terraform would create, modify, or delete, which allows you to review and validate the expected changes. After reviewing the plan, you can then manually apply the changes to your infrastructure through the HCP Terraform workspace.
+
+Note: You can absolutely configure a Terraform workspace to automatically apply the changes to the code, although that is generally not recommended, nor is it the default action.
+
+Wrong Answers:
+
+- HCP Terraform does not automatically run a speculative plan and apply the changes unless you specifically configure the workspace to do so. This is not the default action that would be triggered when you commit new code to the repo
+
+- HCP Terraform does not run external tests, such as terratest and terraform validate on your code when you commit it to a repo
+
+- HCP Terraform, or Terraform in general, does not destroy managed infrastructure when executing a plan and apply. It will only modify the resources needed to ensure the managed restructure now matches the desired state.
+
+https://developer.hashicorp.com/terraform/cloud-docs/run/remote-operations
+
+25. When multiple arguments with single-line values appear on consecutive lines at the same nesting level, HashiCorp recommends that you:
+
+put arguments in alphabetical order
+
+```hcl
+name = "www.example.com"
+records = [aws_eip.lb.public_ip]
+type = "A"
+ttl = "300"
+zone_id = aws_route53_zone.primary.zone_id
+```
+
+HashiCorp recommends aligning the equals signs for better readability and consistency in the code. This helps in quickly identifying and understanding the key-value pairs in the configuration.
+
+```hcl
+#align the equals signs
+
+
+
+ami           = "abc123"
+instance_type = "t2.micro"
+```
+
+HashiCorp style conventions suggest that you align the equals sign for consecutive arguments for easing readability for configurations:
+
+```hcl
+ami           = "abc123"
+instance_type = "t2.micro"
+subnet_id     = "subnet-a6b9cc2d59cc"
+
+```
+
+Notice how the equal (=) signs are aligned, even though the arguments are of different lengths.
+
+https://developer.hashicorp.com/terraform/language/syntax/style
+
+26. True or False? The following code is an example of an implicit dependency in Terraform
+
+```hcl
+
+resource "aws_instance" "web" {
+  ami           = "ami-0c55b159cbfafe1f0"
+  instance_type = "t2.micro"
+}
+
+resource "aws_ebs_volume" "data" {
+  availability_zone = "us-west-2a"
+  size              = 1
+
+  tags = {
+    Name = "data-volume"
+  }
+}
+
+resource "aws_volume_attachment" "attach_data_volume" {
+  device_name = "/dev/xvdf"
+  volume_id   = aws_ebs_volume.data.id
+  instance_id = aws_instance.web.id
+}
+```
+
+True--
+The code snippet provided shows an implicit dependency in Terraform. The resource `"aws_volume_attachment"` `"attach_data_volume"` depends on both `"aws_ebs_volume.data"` and `"aws_instance.web"` resources without explicitly specifying the dependency using the `"depends_on"`attribute. Terraform automatically detects this relationship and ensures that the dependencies are resolved in the correct order during the execution.
+
+Terraform implicit dependencies refer to the dependencies between resources in a Terraform configuration but are not explicitly defined in the configuration. Terraform uses a graph to track these implicit dependencies and ensures that resources are created, updated, and deleted in the correct order.
+
+For example, suppose you have a Terraform configuration that creates a virtual machine and a disk. In that case, Terraform will implicitly depend on the disk being created before the virtual machine because the virtual machine needs the disk to function. Terraform will automatically create the disk first and then create the virtual machine.
+
+Sometimes, Terraform may miss an implicit dependency, resulting in an error when you run terraform apply. In these cases, you can use the `depends_on` argument to explicitly declare the dependency between resources. For example:
+
+```hcl
+resource "aws_instance" "example" {
+  ami           = "ami-0c55b159cbfafe1f0"
+  instance_type = "t2.micro"
+
+  depends_on = [
+    aws_ebs_volume.example
+  ]
+}
+
+resource "aws_ebs_volume" "example" {
+  availability_zone = "us-west-2a"
+  size              = 1
+}
+```
+
+In this example, the aws_instance resource depends on the `aws_ebs_volume` resource, and Terraform will create the `aws_ebs_volume` resource first and then the `aws_instance` resource.
+
+In general, Terraform implicit dependencies are handled automatically, but sometimes it may be necessary to use the `depends_on` argument to ensure that resources are created in the correct order.
+
+https://developer.hashicorp.com/terraform/tutorials/certification-associate-tutorials-003/dependencies
+
+27. Which code snippet would allow you to retrieve information about existing resources and use that information within your Terraform configuration?
+
+```hcl
+module "deploy-servers" {
+  source  = "./app-cluster"
+
+  servers = 5
+}
+```
+
+A.
+
+```hcl
+module "deploy-servers" {
+  source  = "./app-cluster"
+
+  servers = 5
+}
+```
+
+Explanation
+This code snippet defines a module block for deploying servers from a specified source. While modules are useful for organizing and reusing Terraform configurations, this snippet does not focus on retrieving information about existing resources for use in the configuration.
+
+B. `Correct answer`
+
+```hcl
+data "aws_ami" "aws_instance" {
+most_recent = true
+
+owners = ["self"]
+tags = {
+Name = "app-server"
+Tested = "true"
+}
+}
+```
+
+Explanation
+This code snippet defines a data block for retrieving information about an AWS AMI (Amazon Machine Image) based on specific criteria like owners and tags. This data can then be used within the Terraform configuration to make decisions or set attributes based on the retrieved information.
+
+C.
+
+```hcl
+provider "google" {
+project = "acme-app"
+region = "us-central1"
+}
+```
+
+Explanation
+This code snippet defines a provider block for Google Cloud Platform, specifying the project and region. While providers are essential for interacting with cloud platforms, this snippet does not directly address retrieving information about existing resources for use in Terraform configuration.
+
+D.
+
+```hcl
+resource "aws_instance" "web" {
+ami = "ami-a1b2c3d4"
+instance_type = "t2.micro"
+}
+```
+
+Explanation
+This code snippet defines a resource block for creating an AWS EC2 instance with specific attributes like AMI and instance type. While creating new resources is a common task in Terraform, this snippet does not address retrieving information about existing resources for use in the configuration.
+
+E.
+
+```hcl
+locals {
+service_name = "forum"
+owner = "Community Team"
+}
+```
+
+Explanation
+This code snippet defines local values for service_name and owner, which can be used for storing and reusing values within the Terraform configuration. However, it does not directly involve retrieving information about existing resources for use in the configuration.
+
+Overall explanation--
+In Terraform, data blocks are used to retrieve data from external sources, such as APIs or databases, and make that data available to your Terraform configuration. With data blocks, you can use information from external sources to drive your infrastructure as code, making it more dynamic and flexible.
+
+For example, you can use a data block to retrieve a list of Amazon Machine Images (AMIs) from AWS, and then use that data to select the appropriate AMI for a virtual machine you are provisioning:
+
+```hcl
+data "aws_ami" "example" {
+most_recent = true
+
+filter {
+name = "name"
+values = ["amzn2-ami-hvm-2.0.*-x86_64-gp2"]
+}
+
+filter {
+name = "virtualization-type"
+values = ["hvm"]
+}
+}
+
+resource "aws_instance" "example" {
+ami = data.aws_ami.example.id
+instance_type = "t2.micro"
+}
+```
+
+In this example, the data block retrieves the most recent Amazon Linux 2 HVM AMI, and the `aws_instance` resource uses the selected AMI to create a virtual machine.
+
+Data blocks can be used to retrieve information from a wide range of sources, such as databases, APIs, and cloud providers. This information can then be used to conditionally create, update, or delete resources, making your Terraform configurations more flexible and adaptable to changing requirements.
+
+https://developer.hashicorp.com/terraform/language/data-sources
+
+```
+
+```
