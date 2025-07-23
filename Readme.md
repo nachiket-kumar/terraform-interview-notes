@@ -9,7 +9,7 @@ Objective 6 - Use the core Terraform workflow
 Objective 7 - Implement and Maintain State  
 Objective 8 - Read, Generate, and Modify Configuration
 
-Tips to make sure you clear the exam:  
+Tips to get the most out of it  
 ✅ Hands‑on practice is key. Don’t just read — run Terraform locally:  
 Create and destroy resources on a free cloud (AWS free tier works).  
 Experiment with remote state in S3 or Terraform Cloud.  
