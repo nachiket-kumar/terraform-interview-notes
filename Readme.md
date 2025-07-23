@@ -11,14 +11,14 @@ Objective 8 - Read, Generate, and Modify Configuration
 
 TIPS TO MAKE SURE YOU CLEAR THE EXAM:
 
-Tips to make sure you clear the exam:
-✅ Hands‑on practice is key. Don’t just read — run Terraform locally:
-Create and destroy resources on a free cloud (AWS free tier works).
-Experiment with remote state in S3 or Terraform Cloud.
-✅ Understand, don’t memorize.
-Why use modules? Why use workspaces? What problem does state solve?
-✅ Use the HashiCorp official study guide:
-✅ Do practice questions.
+Tips to make sure you clear the exam:  
+✅ Hands‑on practice is key. Don’t just read — run Terraform locally:  
+Create and destroy resources on a free cloud (AWS free tier works).  
+Experiment with remote state in S3 or Terraform Cloud.  
+✅ Understand, don’t memorize.  
+Why use modules? Why use workspaces? What problem does state solve?  
+✅ Use the HashiCorp official study guide:  
+✅ Do practice questions.  
 Tutorials Dojo, Udemy, or free GitHub question banks.
 
 I HAVE PROVIDED IN‑DEPTH EXPLANATIONS FOR EACH QUESTION, AIMED AT ENHANCING YOUR CONCEPTUAL UNDERSTANDING AND PRACTICAL KNOWLEDGE. ADDITIONALLY, I HAVE INCLUDED THE OFFICIAL TERRAFORM DOCUMENTATION LINKS FOR EACH TOPIC COVERED IN THE QUESTIONS AND DISCUSSIONS, ENSURING YOU CAN EXPLORE FURTHER AND VALIDATE EVERY CONCEPT. I HOPE THESE RESOURCES PROVE VALUABLE AND HELP YOU STRENGTHEN YOUR EXPERTISE, THANKYOU!!
