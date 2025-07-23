@@ -1052,4 +1052,65 @@ The string `db` is not the type of Terraform block in this code snippet. It is t
 The string `t2.micro` is not the type of Terraform block in this code snippet. It is the value assigned to the instance_type attribute of the AWS instance resource.
 The string `instance_type` is not the type of Terraform block in this code snippet. It is the attribute key used to specify the instance type for the AWS instance resource.
 
-39.
+39. Sara has her entire application automated using Terraform, but she needs to start automating more infrastructure components, such as creating a new subnet, DNS record, and load balancer. Sara wants to create these new resources using modules so she easily reuse the code. However, Sara is having problems getting the subnet_id from the subnet module to pass to the load balancer module.
+
+modules/subnet.tf:
+
+```hcl
+resource "aws_subnet" "bryan" {
+  vpc_id     = aws_vpc.krausen.id
+  cidr_block = "10.0.1.0/24"
+
+  tags = {
+    Name = "Krausen Subnet"
+  }
+}
+```
+
+What could fix this problem among these?
+
+- Move the subnet and load balancer resource into the main configuration file so they can easily be referenced
+- Add an output block to the subnet module and retrieve the value using module.`subnet.subnet_id` for the load balancer module
+- Add an output block to the subnet module and retrieve the value using module.subnet.subnet_id for the load balancer module
+- Publish the module to a Terraform registry first
+
+--Answer--
+
+Corect ans is - Add an output block to the subnet module and retrieve the value using module.`subnet.subnet_id` for the load balancer module.
+Adding an output block to the subnet module allows the `subnet_id` to be exposed as an output variable. This output variable can then be retrieved using `module.subnet.subnet_id` in the load balancer module, enabling Sara to pass the `subnet_id` between modules.
+Modules also have output values, which are defined within the module with the output keyword. You can access them by referring to module.<MODULE NAME>.<OUTPUT NAME>. Like input variables, module outputs are listed under the outputs tab in the Terraform registry.
+Module outputs are usually either passed to other parts of your configuration, or defined as outputs in your root module.
+
+https://learn.hashicorp.com/tutorials/terraform/module-use#define-root-output-values
+
+AddOn(Why other options are wrong)--
+Moving the subnet and load balancer resources into the main configuration file may make them easier to reference, but it does not address the specific issue of passing the subnet_id from the subnet module to the load balancer module. This solution does not fix the problem Sara is facing.
+
+Contrary to this statement, references to resources created within a module can be used in other modules by defining output variables. Therefore, this choice is incorrect as it provides inaccurate information regarding the usability of resources created within modules.
+
+Publishing the module to a Terraform registry is not a solution to the problem of passing the `subnet_id` between modules. While it may be a good practice for sharing modules with others, it does not address the immediate issue Sara is experiencing.
+
+40. True or False? By default, the terraform destroy command will prompt the user for confirmation before proceeding.
+
+--
+True
+
+By default, the terraform destroy command does prompt the user for confirmation before proceeding to ensure that the user is aware of the resources that will be deleted. This is a safety measure to prevent accidental deletion of important infrastructure.
+
+Overall explanation-
+True. By default, Terraform will prompt for confirmation before proceeding with the terraform destroy command. This prompt allows you to verify that you really want to destroy the infrastructure that Terraform is managing before it actually does so.
+
+Terraform destroy will always prompt for confirmation before executing unless passed the -auto-approve flag.
+
+```hcl
+$ terraform destroy
+Do you really want to destroy all resources?
+  Terraform will destroy all your managed infrastructure, as shown above.
+  There is no undo. Only 'yes' will be accepted to confirm.
+
+  Enter a value: yes
+```
+
+https://developer.hashicorp.com/terraform/tutorials/aws-get-started/aws-destroy
+
+41.
