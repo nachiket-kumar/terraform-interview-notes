@@ -775,7 +775,7 @@ https://developer.hashicorp.com/terraform/cli/commands/state/rm
 
 30. True or False? Using the latest versions of Terraform, terraform init cannot automatically download community providers.
 
-(image-1.png)
+![loading....](<30 image.png>)
 
 -- False
 
