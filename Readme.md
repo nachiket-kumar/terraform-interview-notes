@@ -1334,3 +1334,36 @@ There is no Terraform binary for AIX. Terraform is available for macOS, FreeBSD,
 See the latest versions of Terraform to see the platforms it's available for here:
 https://releases.hashicorp.com/terraform/  
 https://www.terraform.io/downloads.html
+
+49. From the code below, identify the implicit dependency:
+
+```hcl
+resource "aws_eip" "public_ip" {
+    vpc      = true
+    instance = aws_instance.web_server.id
+}
+
+resource "aws_instance" "web_server" {
+  ami           = "ami-2757f631"
+  instance_type = "t2.micro"
+  depends_on    = [aws_s3_bucket.company_data]
+}
+```
+
+Ans-
+
+The EC2 instance labeled `web_server`
+
+Explanation-  
+The implicit dependency in the code is the EC2 instance labeled "web_server" because the `aws_eip` resource depends on the `aws_instance.web_server.id` for its instance attribute.
+
+Overall explanation-
+Implicit dependencies are not explicitly declared in the configuration but are automatically detected by Terraform based on the relationships between resources. Implicit dependencies allow Terraform to automatically determine the correct order in which resources should be created, updated, or deleted, ensuring that resources are created in the right order, and dependencies are satisfied.
+
+For example, if you have a resource that depends on another resource, Terraform will automatically detect this relationship and create the dependent resource after the resource it depends on has been created. This allows Terraform to manage complex infrastructure deployments in an efficient and predictable way.
+
+The EC2 instance labeled `web_server` is the implicit dependency as the `aws_eip` cannot be created until the `aws_instance` labeled `web_server` has been provisioned and the `id` is available.
+
+Note that `aws_s3_bucket.company_data` is an explicit dependency for the `aws_instance.web_server`
+
+https://learn.hashicorp.com/tutorials/terraform/dependencies
