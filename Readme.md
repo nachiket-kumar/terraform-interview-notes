@@ -1324,13 +1324,13 @@ Overall explanation--
 
 Terraform is a cross-platform tool and can be installed on several operating systems, including:
 
-Windows: Terraform can be installed on Windows operating systems using the Windows installer.
-macOS: Terraform can be installed on macOS using the macOS installer or using Homebrew.
-Linux: Terraform can be installed on Linux operating systems using the binary distribution or through package management systems, such as apt or yum.
+Windows: Terraform can be installed on Windows operating systems using the Windows installer.  
+macOS: Terraform can be installed on macOS using the macOS installer or using Homebrew.  
+Linux: Terraform can be installed on Linux operating systems using the binary distribution or through package management systems, such as apt or yum.  
 Unix: Terraform can be installed on Unix-like operating systems using the binary distribution.
 
 There is no Terraform binary for AIX. Terraform is available for macOS, FreeBSD, OpenBSD, Linux, Solaris, and Windows.
 
-See the latest versions of Terraform to see the platforms it's available for here: https://releases.hashicorp.com/terraform/
-
+See the latest versions of Terraform to see the platforms it's available for here:
+https://releases.hashicorp.com/terraform/  
 https://www.terraform.io/downloads.html
